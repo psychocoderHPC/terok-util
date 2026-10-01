@@ -373,7 +373,10 @@ def _unsupported_filesystem(paths: Iterable[Path]) -> str | None:
         mounts = _MOUNTINFO.read_text().splitlines()
     except OSError:
         return None
-    resolved = tuple(path.resolve() for path in paths)
+    try:
+        resolved = tuple(path.resolve() for path in paths)
+    except (OSError, RuntimeError) as error:
+        return f"cannot resolve grant paths: {error}; filesystem unconfined"
     for line in mounts:
         fields, separator, filesystem = line.partition(" - ")
         if not separator or filesystem.split()[0] != "ecryptfs":

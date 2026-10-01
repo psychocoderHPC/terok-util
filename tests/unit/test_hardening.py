@@ -457,7 +457,7 @@ class TestConfineFilesystem:
         report = confine_filesystem([symlink_loop], [])
 
         assert not report.confined
-        assert "open grant path" in report.reason
+        assert "open grant path" in report.reason or "cannot resolve grant paths" in report.reason
         assert fake_libc.restrict_flags == []
 
     def test_inspection_error_abandons_ruleset(
